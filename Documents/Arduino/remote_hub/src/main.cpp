@@ -1,16 +1,27 @@
 #include <HTTPClient.h>
+#include <IRrecv.h>
+#include <IRremoteESP8266.h>
+#include <IRsend.h>
 #include <WebServer.h>
 #include <WiFi.h>
 
 const char *ssidStr = "SK_WiFiGIGAE3E8_2.4G";
-const char *passwordStr = "CCY3B@7401";
+const char *passwordStr = "";
 const char *ssid = "ESP32_AP";
 const char *password = "12345678";
-String userInputValue;  // 사용자 입력 값을 저장할 변수
 
 // SoftAP에서는 고정 IP 192.168.4.1이 자동 설정됨
 WebServer server(80);  // 80번 포트로 HTTP 웹서버 실행
 HTTPClient http;       // HTTP 클라이언트 객체
+
+const uint16_t irLedPin = 27;   // sender 27
+const uint16_t irRecvPin = 32;  // receiver 32
+
+IRrecv irrecv(irRecvPin);
+IRsend irsend(irLedPin);
+decode_results results;
+
+uint32_t lastReceivedValue = 0;
 
 void handleRoot() {
   int n = WiFi.scanNetworks();
@@ -150,6 +161,25 @@ void disconnectWiFi() {
   }
 }
 
+void handleIR() {
+  if (irrecv.decode(&results)) {
+    Serial.printf("Received IR Code: 0x%X\n", results.value);
+    if (results.decode_type != UNKNOWN && results.decode_type != UNUSED && results.value < 0xFFFFFFFF) lastReceivedValue = results.value;
+    irrecv.resume();  // Receive next value
+  }
+  if (Serial.available()) {
+    char command = Serial.read();
+    if (command == 's') {
+      Serial.printf("Sending IR Code: 0x%X\n", lastReceivedValue);
+      irsend.sendNEC(lastReceivedValue);  // Send the last received value
+    } else if (command == 'r') {
+      Serial.println("Resetting last received value.");
+      lastReceivedValue = 0;  // Reset the last received value
+    }
+  }
+  delay(500);
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -177,8 +207,14 @@ void setup() {
     Serial.println("\nWi-Fi Connected!");
   else
     Serial.println("\nConnection Failed");
+
+  irrecv.enableIRIn();  // Start the IR receiver
+  irsend.begin();       // Start the IR sender
+
+  Serial.println("KY-022 Infrared Receiver Test");
 }
 
-void loop() { 
-  server.handleClient(); 
+void loop() {
+  server.handleClient();
+  handleIR();
 }
