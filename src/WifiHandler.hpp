@@ -3,6 +3,8 @@
 #include <WebServer.h>
 #include <WiFi.h>
 
+using std::bind;
+
 WebServer server(80);  // 80번 포트로 HTTP 웹서버 실행
 HTTPClient http;       // HTTP 클라이언트 객체
 
@@ -168,12 +170,12 @@ class WifiHandler {
     // WiFi 접속을 시작한다.
     WiFi.begin(ssidStr, passwordStr);
 
-    server.on("/", std::bind(&WifiHandler::handleRoot, this));
-    server.on("/connect", HTTP_POST, std::bind(&WifiHandler::handleConnect, this));
-    server.on("/call-api", std::bind(&WifiHandler::handleCallApi, this));
-    server.on("/check-connection", std::bind(&WifiHandler::checkConnection, this));
-    server.on("/connect-my-own-wifi", std::bind(&WifiHandler::connectMyOwnWiFi, this));
-    server.on("/disconnect-wifi", std::bind(&WifiHandler::disconnectWiFi, this));
+    server.on("/", bind(&WifiHandler::handleRoot, this));
+    server.on("/connect", HTTP_POST, bind(&WifiHandler::handleConnect, this));
+    server.on("/call-api", bind(&WifiHandler::handleCallApi, this));
+    server.on("/check-connection", bind(&WifiHandler::checkConnection, this));
+    server.on("/connect-my-own-wifi", bind(&WifiHandler::connectMyOwnWiFi, this));
+    server.on("/disconnect-wifi", bind(&WifiHandler::disconnectWiFi, this));
 
     server.begin();
     Serial.println("Web server started");
