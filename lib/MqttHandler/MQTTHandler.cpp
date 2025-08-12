@@ -14,8 +14,8 @@ void MQTTHandler::reconnect() {
   Serial.print("Attempting MQTT connection...");
   if (!client.connected()) {
     if (client.connect("ESP32", mqttUser, mqttPassword)) {
-      Serial.println("connected");
     } else {
+      Serial.println("connected");
       Serial.print("failed, rc=");
       Serial.print(client.state());
       Serial.println(" try again in 5 seconds");

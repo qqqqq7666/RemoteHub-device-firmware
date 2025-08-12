@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-const char* MQTT_SERVER = "mosquitto.com";
+const char* MQTT_SERVER = "192.168.45.18";
 const int MQTT_PORT = 1883;
 const char* MQTT_USER = "user";
 const char* MQTT_PASSWORD = "";

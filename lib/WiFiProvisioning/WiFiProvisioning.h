@@ -12,6 +12,7 @@ public:
     WiFiProvisioning(const std::string &deviceName);
     void begin();
     void loop();
+    void startScan();
 
 private:
     BLEServer *pServer;
@@ -23,7 +24,6 @@ private:
     String ssid;
     String password;
 
-    void startScan();
     void connectToWiFi();
 
     class SSIDCallback : public BLECharacteristicCallbacks {
