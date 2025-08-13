@@ -62,15 +62,13 @@ void WiFiProvisioning::connectToWiFi() {
   ssid.replace("\n", "");
   password.replace("\r", "");
   password.replace("\n", "");
-  const char *ssidToConnect = ssid.c_str();
-  const char *passwordToCennect = password.c_str();
-  Serial.printf("connect to %s\npassword is %s\n", ssidToConnect, passwordToCennect);
+  Serial.printf("connect to %s\npassword is %s\n", ssid.c_str(), password);
   if (ssid.length() == 0 || password.length() == 0) {
     Serial.println("SSID or password not set yet.");
     return;
   }
   Serial.printf("Connecting to WiFi: %s\n", ssid.c_str());
-  WiFi.begin(String(ssid).c_str(), String(password).c_str());
+  WiFi.begin(ssid.c_str(), String(password).c_str());
 
   int retry = 0;
   while (WiFi.status() != WL_CONNECTED && retry < 40) {
@@ -90,7 +88,8 @@ void WiFiProvisioning::connectToWiFi() {
 
 // SSID 콜백
 void WiFiProvisioning::SSIDCallback::onWrite(BLECharacteristic *pChar) {
-  prov_->ssid = pChar->getValue().c_str();
+  std::string value = pChar->getValue();
+  prov_->ssid = String(value.c_str());
   Serial.printf("Received SSID: %s\n", prov_->ssid.c_str());
 }
 
