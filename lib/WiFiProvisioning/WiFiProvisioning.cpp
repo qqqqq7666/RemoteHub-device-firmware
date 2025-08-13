@@ -8,6 +8,10 @@
 WiFiProvisioning::WiFiProvisioning(const std::string &deviceName) { BLEDevice::init(deviceName); }
 
 void WiFiProvisioning::begin() {
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();  // 기존 연결/캐시 초기화
+  delay(500);
+
   pServer = BLEDevice::createServer();
   pService = pServer->createService(SERVICE_UUID);
 
@@ -27,16 +31,23 @@ void WiFiProvisioning::begin() {
   pAdvertising->setScanResponse(true);
   pAdvertising->start();
 
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect(true);  // 기존 연결/캐시 초기화
-  delay(100);
-
   Serial.println("BLE WiFi Provisioning Service started. Waiting for connection...");
   startScan();
 }
 
 void WiFiProvisioning::loop() {
   // 필요하면 주기적으로 스캔 결과 업데이트
+  if (Serial.available()) {
+    char command = Serial.read();
+    if (command == 'p') {
+      startScan();
+    } else if (command == 'd') {
+      WiFi.mode(WIFI_STA);
+      WiFi.disconnect();  // 기존 연결/캐시 초기화
+      delay(100);
+      Serial.println("reset wifi");
+    }
+  }
 }
 
 void WiFiProvisioning::startScan() {
@@ -58,20 +69,24 @@ void WiFiProvisioning::startScan() {
 
 void WiFiProvisioning::connectToWiFi() {
   Serial.println(WiFi.SSID());
+  ssid.trim();
+  password.trim();
   ssid.replace("\r", "");
   ssid.replace("\n", "");
   password.replace("\r", "");
   password.replace("\n", "");
+  const char* testSsid = "SK_WiFiGIGAE3E8_2.4G";
+  const char* testPass = "CCY3B@7401";
   Serial.printf("connect to %s\npassword is %s\n", ssid.c_str(), password);
   if (ssid.length() == 0 || password.length() == 0) {
     Serial.println("SSID or password not set yet.");
     return;
   }
   Serial.printf("Connecting to WiFi: %s\n", ssid.c_str());
-  WiFi.begin(ssid.c_str(), String(password).c_str());
+  WiFi.begin(testSsid, testPass);
 
   int retry = 0;
-  while (WiFi.status() != WL_CONNECTED && retry < 40) {
+  while (WiFi.status() != WL_CONNECTED && retry < 20) {
     delay(500);
     Serial.print(".");
     retry++;

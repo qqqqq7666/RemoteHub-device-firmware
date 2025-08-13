@@ -1,19 +1,27 @@
 #include "MQTTHandler.h"
+
 #include <Arduino.h>
 
-MQTTHandler::MQTTHandler(const char *server, int port, const char *user, const char *password)
-  : mqttServer(server),
-    mqttPort(port),
-    mqttUser(user),
-    mqttPassword(password),
-    client(espClient) {
+void callback(char *topic, byte *payload, unsigned int length) {
+  Serial.printf("\n[MQTT] Topic: %s | Length: %u\n", topic, length);
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i = 0; i < length; i++) {
+    Serial.print((char)payload[i]);
+  }
+}
+
+MQTTHandler::MQTTHandler(const char *server, int port, const char *user, const char *password) : mqttServer(server), mqttPort(port), mqttUser(user), mqttPassword(password), client(espClient) {
   client.setServer(mqttServer, mqttPort);
+  client.setCallback(callback);
 }
 
 void MQTTHandler::reconnect() {
   Serial.print("Attempting MQTT connection...");
   if (!client.connected()) {
     if (client.connect("ESP32", mqttUser, mqttPassword)) {
+      client.subscribe("device/#");
     } else {
       Serial.println("connected");
       Serial.print("failed, rc=");
@@ -25,17 +33,12 @@ void MQTTHandler::reconnect() {
 }
 
 void MQTTHandler::connectMQTT() {
-  while (!client.connected()) {
+  if (!client.connected()) {
     reconnect();
-    Serial.print("Connecting to MQTT broker...");
-    delay(1000);
   }
+  client.loop();
 }
 
-void MQTTHandler::subscribe(const char *topic, int qos) {
-  client.subscribe(topic, qos);
-}
+void MQTTHandler::subscribe(const char *topic, int qos) { client.subscribe(topic, qos); }
 
-PubSubClient& MQTTHandler::getClient() {
-  return client;
-}
+PubSubClient &MQTTHandler::getClient() { return client; }

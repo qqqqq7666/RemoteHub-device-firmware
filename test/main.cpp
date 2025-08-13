@@ -19,5 +19,5 @@ void setup() {
 void loop() {
   irHandler.handleIR();
   mqttHandler.connectMQTT();
-  // wiFiProvisioning->loop();
+  wiFiProvisioning->loop();
 }
