@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-void callback(char *topic, byte *payload, unsigned int length) {
+void MQTTHandler::callback(char *topic, byte *payload, unsigned int length) {
   Serial.printf("\n[MQTT] Topic: %s | Length: %u\n", topic, length);
   Serial.print("Message arrived [");
   Serial.print(topic);
@@ -12,7 +12,9 @@ void callback(char *topic, byte *payload, unsigned int length) {
   }
 }
 
-MQTTHandler::MQTTHandler(const char *server, int port, const char *user, const char *password) : mqttServer(server), mqttPort(port), mqttUser(user), mqttPassword(password), client(espClient) {
+
+// TODO callback 함수 안불리는 문제 해결
+MQTTHandler::MQTTHandler(const char *server, int port) : mqttServer(server), mqttPort(port), client(espClient) {
   client.setServer(mqttServer, mqttPort);
   client.setCallback(callback);
 }
@@ -20,7 +22,7 @@ MQTTHandler::MQTTHandler(const char *server, int port, const char *user, const c
 void MQTTHandler::reconnect() {
   Serial.print("Attempting MQTT connection...");
   if (!client.connected()) {
-    if (client.connect("ESP32", mqttUser, mqttPassword)) {
+    if (client.connect("ESP32")) {
       client.subscribe("device/#");
     } else {
       Serial.println("connected");
@@ -40,5 +42,8 @@ void MQTTHandler::connectMQTT() {
 }
 
 void MQTTHandler::subscribe(const char *topic, int qos) { client.subscribe(topic, qos); }
+void MQTTHandler::publish(const char *topic, const char *payload) {
+  client.publish(topic, payload);
+}
 
 PubSubClient &MQTTHandler::getClient() { return client; }
