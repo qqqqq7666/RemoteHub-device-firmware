@@ -6,8 +6,9 @@
 
 class MQTTHandler {
  private:
-  const char *mqttServer;
+  const char* mqttServer;
   const int mqttPort;
+  const char* mqttId;
 
   WiFiClient espClient;
   PubSubClient client;

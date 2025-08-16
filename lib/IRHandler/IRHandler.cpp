@@ -1,7 +1,6 @@
 #include "IRHandler.h"
 
-IRHandler::IRHandler(uint16_t recvPin, uint16_t sendPin)
-  : irrecv(recvPin), irsend(sendPin), lastReceivedValue(0) {}
+IRHandler::IRHandler(uint16_t recvPin, uint16_t sendPin) : irrecv(recvPin), irsend(sendPin), lastReceivedValue(0) {}
 
 void IRHandler::setupIR() {
   irrecv.enableIRIn();  // Start the IR receiver
@@ -12,9 +11,7 @@ void IRHandler::setupIR() {
 void IRHandler::handleIR() {
   if (irrecv.decode(&results)) {
     Serial.printf("Received IR Code: 0x%X\n", results.value);
-    if (results.decode_type != UNKNOWN &&
-        results.decode_type != UNUSED &&
-        results.value < 0xFFFFFFFF) {
+    if (results.decode_type != UNKNOWN && results.decode_type != UNUSED && results.value < 0xFFFFFFFF) {
       lastReceivedValue = results.value;
     }
     irrecv.resume();  // Receive next value
@@ -33,3 +30,22 @@ void IRHandler::handleIR() {
 
   delay(500);
 }
+
+// void registerSignal(String& signal) {
+//   http.begin(registerIrUrl);
+//   http.addHeader("Content-Type", "application/json");
+//   String body = "{\"signal\":\"" + signal + "\"}";
+//   int code = http.POST(body);
+//   Serial.println("Register response code: " + String(code));
+//   http.end();
+// }
+
+// void retrieveSignal() {
+//   http.begin(retrieveIrUrl);
+//   int code = http.GET();
+//   if (code == 200) {
+//     String payload = http.getString();
+//     Serial.println("Retrieved: " + payload);
+//   }
+//   http.end();
+// }

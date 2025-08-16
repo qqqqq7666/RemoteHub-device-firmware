@@ -114,3 +114,7 @@ void WiFiProvisioning::PASSCallback::onWrite(BLECharacteristic *pChar) {
   Serial.printf("Received Password: %s\n", prov_->password.c_str());
   prov_->connectToWiFi();
 }
+
+IPAddress WiFiProvisioning::getLocalIP() {
+  return WiFi.localIP();
+}
