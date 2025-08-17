@@ -31,21 +31,10 @@ void IRHandler::handleIR() {
   delay(500);
 }
 
-// void registerSignal(String& signal) {
-//   http.begin(registerIrUrl);
-//   http.addHeader("Content-Type", "application/json");
-//   String body = "{\"signal\":\"" + signal + "\"}";
-//   int code = http.POST(body);
-//   Serial.println("Register response code: " + String(code));
-//   http.end();
-// }
+void IRHandler::send(uint32_t signal) {
+  irsend.sendNEC(signal);
+}
 
-// void retrieveSignal() {
-//   http.begin(retrieveIrUrl);
-//   int code = http.GET();
-//   if (code == 200) {
-//     String payload = http.getString();
-//     Serial.println("Retrieved: " + payload);
-//   }
-//   http.end();
-// }
+uint32_t IRHandler::getLastReceiveSignal() {
+  return lastReceivedValue;
+}

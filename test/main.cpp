@@ -6,7 +6,7 @@
 #include "config.h"
 
 IRHandler irHandler(IR_RECV_PIN, IR_LED_PIN);
-MQTTHandler mqttHandler(MQTT_SERVER, MQTT_PORT);
+MQTTHandler mqttHandler(SERVER_IP, MQTT_PORT, irHandler);
 WiFiProvisioning* wiFiProvisioning;
 
 void setup() {

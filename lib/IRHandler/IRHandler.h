@@ -6,17 +6,19 @@
 #include <IRsend.h>
 
 class IRHandler {
- public:
-  IRHandler(uint16_t recvPin, uint16_t sendPin);
-
-  void setupIR();
-  void handleIR();
-
  private:
   IRrecv irrecv;
   IRsend irsend;
   decode_results results;
   uint32_t lastReceivedValue;
+
+ public:
+  IRHandler(uint16_t recvPin, uint16_t sendPin);
+
+  void setupIR();
+  void handleIR();
+  void send(uint32_t signal);
+  uint32_t getLastReceiveSignal();
 };
 
 #endif
