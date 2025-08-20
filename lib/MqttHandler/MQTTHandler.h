@@ -4,12 +4,14 @@
 #include <PubSubClient.h>
 #include <HTTPClient.h>
 #include "IRHandler.h"
+#include "Config.h"
 
 class MQTTHandler {
  private:
   const char* mqttServer;
   const int mqttPort;
   const char* mqttId;
+  String signalSaveUrl = "http://" + String(SERVER_IP) + ":8080/api/v1/signals";
 
   WiFiClient espClient;
   PubSubClient client;
@@ -20,7 +22,7 @@ class MQTTHandler {
   static void callback(char* topic, byte* payload, unsigned int length);
 
  public:
-  MQTTHandler(const char* server, int port, IRHandler& ir);
+  MQTTHandler(const char* mqttId, const char* server, int port, IRHandler& ir);
   void connectMQTT();
   void subscribe(const char* topic, int qos = 0);
   void publish(const char* topic, const char* payload);

@@ -7,8 +7,8 @@ const char* SERVER_IP = "192.168.45.18";
 const int MQTT_PORT = 1883;
 const char* MQTT_USER = "user";
 const char* MQTT_PASSWORD = "";
-const int DB_PORT = 3306;
-const char* REMOTE_HUB_ID = "remoteHubId123";
+
+const char* MQTT_ID = "remoteHubId123";
 const char* REMOTE_HUB_PASSWORD = "123";
 
 const uint16_t IR_LED_PIN = 27;   // sender 27

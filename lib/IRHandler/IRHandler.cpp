@@ -38,3 +38,7 @@ void IRHandler::send(uint32_t signal) {
 uint32_t IRHandler::getLastReceiveSignal() {
   return lastReceivedValue;
 }
+
+int IRHandler::getDecodeType(uint32_t signal) {
+  return results.decode_type;
+}

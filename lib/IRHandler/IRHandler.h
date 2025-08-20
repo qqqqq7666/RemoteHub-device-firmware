@@ -18,6 +18,7 @@ class IRHandler {
   void setupIR();
   void handleIR();
   void send(uint32_t signal);
+  int getDecodeType(uint32_t signal);
   uint32_t getLastReceiveSignal();
 };
 
