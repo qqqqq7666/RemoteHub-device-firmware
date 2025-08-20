@@ -44,9 +44,10 @@ void MQTTHandler::handleMessage(char *topic, byte *payload, unsigned int length)
     String deviceId = stringPayload.substring(0, spaceIdx);
     String signalName = stringPayload.substring(spaceIdx + 1, stringPayload.length());
     if (irHandler.getDecodeType(signal) < 1) {
-      String topicId = String(mqttId);
-      topicId.concat("/signal/status");
-      client.publish(topicId.c_str(), "fail");
+      // String topicId = String(mqttId);
+      // topicId.concat("/signal/status");
+      // client.publish(topicId.c_str(), "fail");
+      signalStringValue = "-1";
     } else {
       http.begin(signalSaveUrl);
       http.addHeader("Content-Type", "application/json");
